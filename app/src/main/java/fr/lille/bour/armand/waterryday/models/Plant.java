@@ -52,12 +52,15 @@ public class Plant {
         CURRENT_DATE = new LocalDate(date);
     }
 
+    /** The plant's id in the database. */
+    protected int id;
     /** The plant's name. */
     protected String name;
     /** The specie of the plant. */
     protected String specie;
     /** The location of the plant. */
     protected String location;
+
     /**
      * The watering frequency in days. Should be greater than or equal to 1.
      * The plant needs to be watered every <em>n</em> days.
@@ -68,11 +71,13 @@ public class Plant {
 
     public Plant(final String name, final String specie, final String location,
                  final int wateringFrequency) {
-        this(name, specie, location, wateringFrequency, new LocalDate());
+        this(-1, name, specie, location, wateringFrequency, new LocalDate());
     }
 
     /**
      * Creates a new plant with the specified parameters.
+     *
+     * @param id
      * @param name
      * @param specie
      * @param location
@@ -80,7 +85,7 @@ public class Plant {
      * @param lastWateredDate
      * @throws IllegalArgumentException when
      */
-    public Plant(final String name, final String specie, final String location,
+    public Plant(int id, final String name, final String specie, final String location,
                  final int wateringFrequency, final LocalDate lastWateredDate)
                  throws IllegalArgumentException {
         this.name = name;
@@ -144,6 +149,22 @@ public class Plant {
      */
     public int getWateringFrequency() {
         return wateringFrequency;
+    }
+
+    /**
+     * Gets the {@link #id} of the plant in the database.
+     * @return The id of the plant.
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Sets the {@link #id} of the plant in the database.
+     * @param id The id of the plant in the database.
+     */
+    public void setId(final int id) {
+        this.id = id;
     }
 
     /**

@@ -3,6 +3,9 @@ package fr.lille.bour.armand.waterryday.models;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The {@link Plant} class represents a plant saved by the user in the application.
  *
@@ -53,7 +56,7 @@ public class Plant {
     }
 
     /** The plant's id in the database. */
-    protected int id;
+    protected long id;
     /** The plant's name. */
     protected String name;
     /** The specie of the plant. */
@@ -71,7 +74,7 @@ public class Plant {
 
     public Plant(final String name, final String specie, final String location,
                  final int wateringFrequency) {
-        this(-1, name, specie, location, wateringFrequency, new LocalDate());
+        this(-1, name, specie, location, wateringFrequency, LocalDate.now());
     }
 
     /**
@@ -88,6 +91,7 @@ public class Plant {
     public Plant(int id, final String name, final String specie, final String location,
                  final int wateringFrequency, final LocalDate lastWateredDate)
                  throws IllegalArgumentException {
+        this.id = id;
         this.name = name;
         this.specie = specie;
         this.location = location;
@@ -155,7 +159,7 @@ public class Plant {
      * Gets the {@link #id} of the plant in the database.
      * @return The id of the plant.
      */
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -163,7 +167,7 @@ public class Plant {
      * Sets the {@link #id} of the plant in the database.
      * @param id The id of the plant in the database.
      */
-    public void setId(final int id) {
+    public void setId(final long id) {
         this.id = id;
     }
 
@@ -210,6 +214,27 @@ public class Plant {
         } else {
             return WateringState.OKAY;
         }
+    }
+
+    /**
+     * Generates a list of predefined plants.
+     * @return A list of plants.
+     */
+    public static List<Plant> generatePlants() {
+        final List<Plant> plants = new ArrayList<>();
+        plants.add(new Plant(-1, "Germaine", "Géranium", "Cuisine", 3, LocalDate.now()));
+        plants.add(new Plant(-1, "Raymonde", "Basilic", "Salon", 3, LocalDate.now().minusDays(10)));
+        plants.add(new Plant(-1, "Robert", "Bananier", "Cuisine", 7, LocalDate.now().minusDays(3)));
+        plants.add(new Plant(-1, "Ursula", "Sarracenia ", "Vestibule", 3, LocalDate.now().minusDays(3)));
+        plants.add(new Plant(-1, "Léopoldine", "Sarracenia", "Vestibule", 2, LocalDate.now().minusDays(3)));
+        plants.add(new Plant(-1, "Victor", "Droséra", "Vestibule", 1, LocalDate.now()));
+        plants.add(new Plant(-1, "Louloute", "Hortensia", "Cuvette des WCs", 1, LocalDate.now().minusDays(2)));
+        plants.add(new Plant(-1, "Jacinthe", "", "Micro-ondes", 3, LocalDate.now().minusDays(2)));
+        plants.add(new Plant(-1, "Froufrou", "Dionée", "Dans mon chausson droit", 7, LocalDate.now().minusDays(6)));
+        plants.add(new Plant(-1, "Xavière", "Droséra", "Frigo", 1, LocalDate.now()));
+        plants.add(new Plant(-1, "Ulysse", "", "Sous mon diplôme de Master", 5, LocalDate.now().minusDays(5)));
+
+        return plants;
     }
 
     /**

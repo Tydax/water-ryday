@@ -1,11 +1,13 @@
 package fr.lille.bour.armand.waterryday.models.database;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,10 @@ public class PlantDB {
             PlantFields.FIELD_WATERINGFREQUENCY,
             PlantFields.FIELD_LASTWATEREDDATE);
 
+    public static final String DATE_PATTERN = "yyyy/MM/dd";
+
     private static final PlantDB INSTANCE = new PlantDB();
+    public static final String WHERE_CLAUSE = "%s = ?";
 
     static class PlantFields implements BaseColumns {
         public static final String FIELD_ID = "_id";
@@ -41,7 +46,7 @@ public class PlantDB {
         public static final String FIELD_LASTWATEREDDATE = "lastWateredData";
 
         public static final String[] ALL = {
-                FIELD_ID,
+                _ID,
                 FIELD_NAME,
                 FIELD_SPECIE,
                 FIELD_LOCATION,
@@ -88,29 +93,48 @@ public class PlantDB {
      * @param helper The database helper to use.
      * @returns The id of the plant.
      */
-    public int insertPlant(final SQLiteOpenHelper helper, final Plant plant) {
-        // TODO: implement
-        return 0;
+    public long insertPlant(final SQLiteOpenHelper helper, final Plant plant) {
+        final SQLiteDatabase db = helper.getWritableDatabase();
+        final ContentValues values = convertPlantToContentValues(plant);
+        final long id = db.insert(TABLE_NAME, null, values);
+        plant.setId(id);
+        return id;
     }
 
     /**
      * Deletes the specified plant at the specified id in the database.
      * @param helper The database helper to use.
      * @param id The id of the plant to delete.
+     * @return <code>true</code> if a row was successfully deleted; <br>
+     *         <code>false</code> otherwise.
      */
-    public void deletePlant(final SQLiteOpenHelper helper, final int id) {
-        // TODO: implement
+    public boolean deletePlant(final SQLiteOpenHelper helper, final long id) {
+        final SQLiteDatabase db = helper.getWritableDatabase();
+        final String whereClause = String.format(WHERE_CLAUSE, PlantFields._ID);
+        final String[] whereArgs = { String.valueOf(id) };
+        return db.delete(TABLE_NAME, whereClause, whereArgs) == 1;
     }
 
     /**
      * Updates the plant in the database.
-     * @param db The database helper to use.
+     * @param helper The database helper to use.
      * @param plant The plant to update.
+     * @return <code>true</code> if a row was successfully updated; <br>
+     *         <code>false</code> otherwise.
      */
-    public void updatePlant(final SQLiteOpenHelper db, final Plant plant) {
-        // TODO: implement
+    public boolean  updatePlant(final SQLiteOpenHelper helper, final Plant plant) {
+        final SQLiteDatabase db = helper.getWritableDatabase();
+        final String whereClause = String.format(WHERE_CLAUSE, PlantFields._ID);
+        final String[] whereArgs = { String.valueOf(plant.getId()) };
+        final ContentValues values = convertPlantToContentValues(plant);
+        return db.update(TABLE_NAME, values, whereClause, whereArgs) == 1;
     }
 
+    /**
+     * Converts a cursor resulting from a query from the database to a {@link Plant} object.
+     * @param cursor The cursor containing the data.
+     * @return A new {@link Plant} object containing the data.
+     */
     private static Plant convertCursorToPlant(final Cursor cursor) {
         final int id = cursor.getInt(0);
         final String name = cursor.getString(1);
@@ -128,5 +152,32 @@ public class PlantDB {
 
         final Plant plant = new Plant(id, name, specie, location, wateringFrequency, lastWateredDate);
         return plant;
+    }
+
+    /**
+     * Converts a {@link Plant} object into a set of values to insert in the database.
+     * @param plant The plant to insert.
+     * @return
+     */
+    private static ContentValues convertPlantToContentValues(final Plant plant) {
+        final String lastWateredDateStr = plant.getLastWateredDate().toString(DateTimeFormat.forPattern(DATE_PATTERN));
+        final ContentValues values = new ContentValues();
+        values.put(PlantFields.FIELD_NAME, plant.getName());
+        values.put(PlantFields.FIELD_SPECIE, plant.getSpecie());
+        values.put(PlantFields.FIELD_LOCATION, plant.getLocation());
+        values.put(PlantFields.FIELD_WATERINGFREQUENCY, plant.getWateringFrequency());
+        values.put(PlantFields.FIELD_LASTWATEREDDATE, lastWateredDateStr);
+        return values;
+    }
+
+    /**
+     * Fills the <code>Plants</code> table with predefined values
+     * @param helper The database helper to use.
+     */
+    public void fillWithValues(final SQLiteOpenHelper helper) {
+        final List<Plant> plants = Plant.generatePlants();
+        for (final Plant plant : plants) {
+            insertPlant(helper, plant);
+        }
     }
 }

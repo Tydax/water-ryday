@@ -1,5 +1,6 @@
 package fr.lille.bour.armand.waterryday.activity;
 
+import android.content.Intent;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.lille.bour.armand.waterryday.R;
+import fr.lille.bour.armand.waterryday.activity.fragment.AddPlantFragment;
 import fr.lille.bour.armand.waterryday.models.Plant;
 import fr.lille.bour.armand.waterryday.models.database.DatabaseHelper;
 import fr.lille.bour.armand.waterryday.models.database.PlantDB;
@@ -31,6 +33,8 @@ import fr.lille.bour.armand.waterryday.models.database.PlantDB;
  * item details side-by-side using two vertical panes.
  */
 public class PlantListActivity extends AppCompatActivity {
+
+    private static final int REQUEST_ADDPLANT = 1;
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -81,6 +85,30 @@ public class PlantListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_ADDPLANT:
+                if (resultCode == RESULT_OK) {
+                    final String name = data.getStringExtra(AddPlantFragment.KEY_NAME);
+                    final String specie = data.getStringExtra(AddPlantFragment.KEY_SPECIE);
+                    final String location = data.getStringExtra(AddPlantFragment.KEY_LOCATION);
+                    final int waterFreq = data.getIntExtra(AddPlantFragment.KEY_WATERFREQ, -1);
+
+                    if (waterFreq < 1) {
+                        Toast.makeText(this, R.string.toast_genericFailure, Toast.LENGTH_SHORT).show();
+                    } else {
+                        final Plant plant = new Plant(name, specie, location, waterFreq);
+                        new InsertPlantTask().execute(plant);
+                    }
+                }
+                break;
+
+            default:
+                break;
+        }
     }
 
     public class SimpleItemRecyclerViewAdapter

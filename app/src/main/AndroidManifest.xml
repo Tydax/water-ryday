@@ -27,6 +27,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fr.lille.bour.armand.waterryday.activity.PlantListActivity" />
         </activity>
+        <activity android:name=".activity.AddPlantActivity"></activity>
     </application>
 
 </manifest>

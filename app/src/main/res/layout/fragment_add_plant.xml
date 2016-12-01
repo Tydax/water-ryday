@@ -1,0 +1,86 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="fr.lille.bour.armand.waterryday.activity.fragment.AddPlantFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:ems="10"
+            android:id="@+id/plantAddSpecie"
+            android:hint="@string/addPlant_specie"
+            android:layout_below="@+id/plantAddName"
+            android:layout_alignLeft="@+id/plantAddName"
+            android:layout_alignStart="@+id/plantAddName"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/plantAddWaterFrequency"
+            android:hint="@string/addPlant_waterFreqDays"
+            android:layout_below="@+id/plantAddLocation"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/plantAddLocation"
+            android:hint="@string/addPlant_location"
+            android:inputType="textPersonName"
+            android:layout_below="@+id/plantAddSpecie"
+            android:layout_alignLeft="@+id/plantAddSpecie"
+            android:layout_alignStart="@+id/plantAddSpecie" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/plantAddName"
+            android:hint="@string/addPlant_name"
+            android:inputType="textPersonName"
+            android:layout_marginLeft="13dp"
+            android:layout_marginStart="13dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:text="@string/addPlant_waterFreq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/addPlantTextWaterLeft"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="18sp"
+            android:layout_alignBaseline="@+id/plantAddWaterFrequency"
+            android:layout_alignBottom="@+id/plantAddWaterFrequency"
+            android:layout_toLeftOf="@+id/plantAddWaterFrequency"
+            android:layout_toStartOf="@+id/plantAddWaterFrequency" />
+
+        <Button
+            android:text="@string/addPlant_saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/plantAddButton"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="22dp"
+            android:layout_marginEnd="22dp"
+            android:layout_marginBottom="15dp"
+            style="@style/Widget.AppCompat.Button" />
+
+    </RelativeLayout>
+</FrameLayout>

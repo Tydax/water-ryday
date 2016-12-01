@@ -1,8 +1,26 @@
 <resources>
     <string name="app_name">Water\'ryday!</string>
     <string name="title_plant_detail">Plant Detail</string>
+
+    <!-- Add plant fragment -->
+    <string name="addPlant_name">Name</string>
+    <string name="addPlant_specie">Specie</string>
+    <string name="addPlant_location">Location</string>
+    <string name="addPlant_waterFreq">Needs water every: </string>
+    <string name="addPlant_waterFreqDays">Day(s)</string>
+    <string name="addPlant_saveButton">Add</string>
+
+
+    <!-- Toast messages-->
+    <string name="toast_genericFailure">Something went wrong... Yeah, sorry.</string>
+    <!-- Asynctasks errors -->
     <string name="toast_insert_failed">Could not insert plant.</string>
     <string name="toast_delete_failed">Could not delete plant.</string>
     <string name="toast_fetch_failed">Could not fetch plants from database.</string>
     <string name="toast_update_failed">Could not update plant.</string>
+
+    <!-- Add plant form errors -->
+    <string name="toast_addPlant_emptyNameSpecie">Please give your plant at least a name or a specie!</string>
+    <string name="toast_addPlant_wrongWaterFreq">The watering frequency must be greater than 1!</string>
+    <string name="toast_addPlant_invalidWaterFreq">Invalid watering frequency! Are you trying to break me?</string>
 </resources>

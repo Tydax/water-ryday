@@ -2,42 +2,26 @@ package fr.lille.bour.armand.waterryday.models.database;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import fr.lille.bour.armand.waterryday.models.Plant;
 
 /**
- * Singleton class used to interact with the Plant table.
+ * Single class to access the {@link Plant} table.
  *
  * @author Armand (Tydax) BOUR
  */
 
-public class PlantDB {
+public class PlantDB extends AbstractDB<Plant> {
 
-    /** The name of the table in the database. */
-    public static final String TABLE_NAME = "plants";
-    /** The query to insert for the field. */
-    public static final String TABLE_FIELDS = String.format(", %s VARCHAR(100), %s VARCHAR(500), %s VARCHAR(200), %s INTEGER, %s VARCHAR(12)",
-            PlantFields.FIELD_NAME,
-            PlantFields.FIELD_SPECIE,
-            PlantFields.FIELD_LOCATION,
-            PlantFields.FIELD_WATERINGFREQUENCY,
-            PlantFields.FIELD_LASTWATEREDDATE);
-
-    public static final String DATE_PATTERN = "yyyy/MM/dd";
-
-    private static final PlantDB INSTANCE = new PlantDB();
-    public static final String WHERE_CLAUSE = "%s = ?";
-
-    static class PlantFields implements BaseColumns {
+    /** The fields of the table. */
+    protected static class PlantFields implements BaseColumns {
         public static final String FIELD_ID = "_id";
         public static final String FIELD_NAME = "name";
         public static final String FIELD_SPECIE = "specie";
@@ -55,9 +39,22 @@ public class PlantDB {
         };
     }
 
-    private PlantDB() {
-        // Nothing to do here
-    }
+
+    /** The name of the table in the database. */
+    public static final String TABLE_NAME = "plants";
+    /** The query to insert for the field. */
+    public static final String TABLE_FIELDS = String.format(", %s VARCHAR(100), %s VARCHAR(500), %s VARCHAR(200), %s INTEGER, %s VARCHAR(12)",
+            PlantFields.FIELD_NAME,
+            PlantFields.FIELD_SPECIE,
+            PlantFields.FIELD_LOCATION,
+            PlantFields.FIELD_WATERINGFREQUENCY,
+            PlantFields.FIELD_LASTWATEREDDATE);
+
+    public static final String DATE_PATTERN = "yyyy/MM/dd";
+
+    private static final PlantDB INSTANCE = new PlantDB();
+    public static final String WHERE_CLAUSE = "%s = ?";
+
 
     /**
      * Gets the instance of the singleton.
@@ -68,74 +65,62 @@ public class PlantDB {
     }
 
     /**
-     * Gets all the plants in the database.
-     * @return A list containing all the plants stored in the database.
-     * @param helper The database helper to use.
+     * Gets the table name associated with that class.
+     *
+     * @return The table name.
      */
-    public List<Plant> getAllPlants(final SQLiteOpenHelper helper) {
-        final SQLiteDatabase db = helper.getReadableDatabase();
-        final Cursor cursor = db.query(TABLE_NAME, PlantFields.ALL, null, null, null, null, null);
-        cursor.moveToFirst();
-
-        final List<Plant> plants = new ArrayList<>();
-        while (!cursor.isAfterLast()) {
-            final Plant plant = convertCursorToPlant(cursor);
-            plants.add(plant);
-            cursor.moveToNext();
-        }
-
-        return plants;
+    @Override
+    public String getTableName() {
+        return TABLE_NAME;
     }
 
     /**
-     * Inserts the specified plant in the database and updates its {@link Plant#id}.
-     * @param plant The plant to insert in the database.
-     * @param helper The database helper to use.
-     * @returns The id of the plant.
+     * Gets the list of fields used to initialise the table.
+     *
+     * @return A String containing the fields and the type for table creation.<br>
+     * Example: ", attr1 TEXT, attr2 INT"
      */
-    public long insertPlant(final SQLiteOpenHelper helper, final Plant plant) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        final ContentValues values = convertPlantToContentValues(plant);
-        final long id = db.insert(TABLE_NAME, null, values);
-        plant.setId(id);
-        return id;
+    @Override
+    public String getTableFieldsAndTypes() {
+        return TABLE_FIELDS;
     }
 
     /**
-     * Deletes the specified plant at the specified id in the database.
-     * @param helper The database helper to use.
-     * @param id The id of the plant to delete.
-     * @return <code>true</code> if a row was successfully deleted; <br>
-     *         <code>false</code> otherwise.
+     * Gets the list of table field names of the table.
+     *
+     * @return The list of table field names.
      */
-    public boolean deletePlant(final SQLiteOpenHelper helper, final long id) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        final String whereClause = String.format(WHERE_CLAUSE, PlantFields._ID);
-        final String[] whereArgs = { String.valueOf(id) };
-        return db.delete(TABLE_NAME, whereClause, whereArgs) == 1;
+    @Override
+    public String[] getAllTableFields() {
+        return PlantFields.ALL;
     }
 
     /**
-     * Updates the plant in the database.
-     * @param helper The database helper to use.
-     * @param plant The plant to update.
-     * @return <code>true</code> if a row was successfully updated; <br>
-     *         <code>false</code> otherwise.
+     * Converts the specified plant into a {@link ContentValues} object for database interaction.
+     *
+     * @param plant The plant to convert.
+     * @return A {@link ContentValues} object containing the values stored in the object.
      */
-    public boolean  updatePlant(final SQLiteOpenHelper helper, final Plant plant) {
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        final String whereClause = String.format(WHERE_CLAUSE, PlantFields._ID);
-        final String[] whereArgs = { String.valueOf(plant.getId()) };
-        final ContentValues values = convertPlantToContentValues(plant);
-        return db.update(TABLE_NAME, values, whereClause, whereArgs) == 1;
+    @Override
+    protected ContentValues convertObjectToContentValues(final Plant plant) {
+        final String lastWateredDateStr = plant.getLastWateredDate().toString(DateTimeFormat.forPattern(DATE_PATTERN));
+        final ContentValues values = new ContentValues();
+        values.put(PlantFields.FIELD_NAME, plant.getName());
+        values.put(PlantFields.FIELD_SPECIE, plant.getSpecie());
+        values.put(PlantFields.FIELD_LOCATION, plant.getLocation());
+        values.put(PlantFields.FIELD_WATERINGFREQUENCY, plant.getWateringFrequency());
+        values.put(PlantFields.FIELD_LASTWATEREDDATE, lastWateredDateStr);
+        return values;
     }
 
     /**
-     * Converts a cursor resulting from a query from the database to a {@link Plant} object.
-     * @param cursor The cursor containing the data.
-     * @return A new {@link Plant} object containing the data.
+     * Converts a cursor containing the values of one #K object to an instance of #K.
+     *
+     * @param cursor The cursor to convert.
+     * @return An instance of K containing the values in the cursor.
      */
-    private static Plant convertCursorToPlant(final Cursor cursor) {
+    @Override
+    protected Plant convertCursorToObject(Cursor cursor) {
         final int id = cursor.getInt(0);
         final String name = cursor.getString(1);
         final String specie = cursor.getString(2);
@@ -155,29 +140,14 @@ public class PlantDB {
     }
 
     /**
-     * Converts a {@link Plant} object into a set of values to insert in the database.
-     * @param plant The plant to insert.
-     * @return
-     */
-    private static ContentValues convertPlantToContentValues(final Plant plant) {
-        final String lastWateredDateStr = plant.getLastWateredDate().toString(DateTimeFormat.forPattern(DATE_PATTERN));
-        final ContentValues values = new ContentValues();
-        values.put(PlantFields.FIELD_NAME, plant.getName());
-        values.put(PlantFields.FIELD_SPECIE, plant.getSpecie());
-        values.put(PlantFields.FIELD_LOCATION, plant.getLocation());
-        values.put(PlantFields.FIELD_WATERINGFREQUENCY, plant.getWateringFrequency());
-        values.put(PlantFields.FIELD_LASTWATEREDDATE, lastWateredDateStr);
-        return values;
-    }
-
-    /**
      * Fills the <code>Plants</code> table with predefined values
      * @param helper The database helper to use.
      */
     public void fillWithValues(final SQLiteOpenHelper helper) {
         final List<Plant> plants = Plant.generatePlants();
         for (final Plant plant : plants) {
-            insertPlant(helper, plant);
+            insert(helper, plant);
         }
     }
+
 }

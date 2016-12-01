@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Water\'ryday!</string>
     <string name="title_plant_detail">Plant Detail</string>
+    <string name="toast_insert_failed">Could not insert plant.</string>
+    <string name="toast_delete_failed">Could not delete plant.</string>
+    <string name="toast_fetch_failed">Could not fetch plants from database.</string>
+    <string name="toast_update_failed">Could not update plant.</string>
 </resources>

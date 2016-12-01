@@ -12,7 +12,7 @@ import java.util.List;
  * @author Armand (Tydax) BOUR
  */
 
-public class Plant {
+public class Plant implements DBObject {
 
     protected static final String EXC_CAUSE_NEGATIVE_NULL_WATERINGFREQUENCY = "Cannot specify a negative or null number.";
 
@@ -86,7 +86,7 @@ public class Plant {
      * @param location
      * @param wateringFrequency
      * @param lastWateredDate
-     * @throws IllegalArgumentException when
+     * @throws IllegalArgumentException When wateringFrequency is negative or equal to zero.
      */
     public Plant(int id, final String name, final String specie, final String location,
                  final int wateringFrequency, final LocalDate lastWateredDate)
@@ -159,6 +159,7 @@ public class Plant {
      * Gets the {@link #id} of the plant in the database.
      * @return The id of the plant.
      */
+    @Override
     public long getId() {
         return id;
     }
@@ -167,6 +168,7 @@ public class Plant {
      * Sets the {@link #id} of the plant in the database.
      * @param id The id of the plant in the database.
      */
+    @Override
     public void setId(final long id) {
         this.id = id;
     }
@@ -235,6 +237,10 @@ public class Plant {
         plants.add(new Plant(-1, "Ulysse", "", "Sous mon diplôme de Master", 5, LocalDate.now().minusDays(5)));
 
         return plants;
+    }
+
+    public void setLastWateredDate(final LocalDate lastWateredDate) {
+        this.lastWateredDate = lastWateredDate;
     }
 
     /**
